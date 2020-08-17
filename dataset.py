@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 from logger import logger
-from menu import args
+from cli import args
 
 DATA_DIR = Path("data")
 RAW_DATA = DATA_DIR / "old-newspaper.tsv"
@@ -48,6 +48,9 @@ def split(random_seed: int):
     y_test = []
     for lang in STR2ID.keys():
         data = pd.read_csv(DATA_DIR / "{}.tsv".format(lang), sep="\t")
+
+        # we don't process all samples due to the storage limitation
+        data = data.sample(n=10000, random_state=0)
         texts = data["Text"].to_numpy()
 
         indices = np.arange(len(texts))
@@ -64,40 +67,41 @@ def split(random_seed: int):
 
         assert len(texts) == len(train_texts) + len(dev_texts) + len(test_texts)
 
-        X_train.append(train_texts)
-        X_dev.append(dev_texts)
-        X_test.append(test_texts)
+        for text in train_texts:
+            X_train.append(text)
+            y_train.append(STR2ID[lang])
 
-        train_label = [STR2ID[lang] for _ in range(len(train_texts))]
-        dev_label = [STR2ID[lang] for _ in range(len(dev_texts))]
-        test_label = [STR2ID[lang] for _ in range(len(test_texts))]
+        for text in dev_texts:
+            X_dev.append(text)
+            y_dev.append(STR2ID[lang])
 
-        y_train.append(train_label)
-        y_dev.append(dev_label)
-        y_test.append(test_label)
+        for text in test_texts:
+            X_test.append(text)
+            y_test.append(STR2ID[lang])
 
     splits_dir = DATA_DIR / str(random_seed)
 
     splits_dir.mkdir(parents=True, exist_ok=True)
 
     logger.info("Recording splits")
-    np.save(splits_dir / "X_train.npy", np.asarray(X_train).flatten())
-    np.save(splits_dir / "X_dev.npy", np.asarray(X_dev).flatten())
-    np.save(splits_dir / "X_test.npy", np.asarray(X_test).flatten())
-    np.save(splits_dir / "y_train.npy", np.asarray(y_train).flatten())
-    np.save(splits_dir / "y_dev.npy", np.asarray(y_dev).flatten())
-    np.save(splits_dir / "y_test.npy", np.asarray(y_test).flatten())
+    np.savez_compressed(splits_dir / "data.npz", X_train=np.asarray(X_train).reshape(-1, 1)
+             , X_dev=np.asarray(X_dev).reshape(-1, 1),
+             X_test=np.asarray(X_test).reshape(-1, 1),
+             y_train=np.asarray(y_train).reshape(-1, 1),
+             y_dev=np.asarray(y_dev).reshape(-1, 1),
+             y_test=np.asarray(y_test).reshape(-1, 1))
 
 
 def read_splits(random_seed):
     splits_dir = DATA_DIR / str(random_seed)
-    X_train = np.load(splits_dir / "X_train.npy")
-    X_dev = np.load(splits_dir / "X_dev.npy")
-    X_test = np.load(splits_dir / "X_test.npy")
-    y_train = np.load(splits_dir / "y_train.npy")
-    y_dev = np.load(splits_dir / "y_dev.npy")
-    y_test = np.load(splits_dir / "y_test.npy")
-    X_train, y_train, X_dev, y_dev, X_test, y_test
+    data = np.load(splits_dir / "data.npz")
+    X_train = data["X_train"]
+    X_dev = data["X_dev"]
+    X_test = data["X_test"]
+    y_train = data["y_train"]
+    y_dev = data["y_dev"]
+    y_test = data["y_test"]
+    return X_train, y_train, X_dev, y_dev, X_test, y_test
 
 
 if __name__ == '__main__':

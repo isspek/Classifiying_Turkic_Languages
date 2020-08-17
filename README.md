@@ -6,7 +6,6 @@ We choose the following Turkic langs for our analysis:
   - Turkish
   - Azerbaijani 
   - Uzbek
-  - Kazakh 
   
  
  
