@@ -3,8 +3,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from logger import logger
 from cli import args
+from logger import logger
 
 DATA_DIR = Path("data")
 RAW_DATA = DATA_DIR / "old-newspaper.tsv"
@@ -50,7 +50,7 @@ def split(random_seed: int):
         data = pd.read_csv(DATA_DIR / "{}.tsv".format(lang), sep="\t")
 
         # we don't process all samples due to the storage limitation
-        data = data.sample(n=10000, random_state=0)
+        data = data.sample(n=5000, random_state=0)
         texts = data["Text"].to_numpy()
 
         indices = np.arange(len(texts))
@@ -85,11 +85,11 @@ def split(random_seed: int):
 
     logger.info("Recording splits")
     np.savez_compressed(splits_dir / "data.npz", X_train=np.asarray(X_train).reshape(-1, 1)
-             , X_dev=np.asarray(X_dev).reshape(-1, 1),
-             X_test=np.asarray(X_test).reshape(-1, 1),
-             y_train=np.asarray(y_train).reshape(-1, 1),
-             y_dev=np.asarray(y_dev).reshape(-1, 1),
-             y_test=np.asarray(y_test).reshape(-1, 1))
+                        , X_dev=np.asarray(X_dev).reshape(-1, 1),
+                        X_test=np.asarray(X_test).reshape(-1, 1),
+                        y_train=np.asarray(y_train).reshape(-1, 1),
+                        y_dev=np.asarray(y_dev).reshape(-1, 1),
+                        y_test=np.asarray(y_test).reshape(-1, 1))
 
 
 def read_splits(random_seed):
