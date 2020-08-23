@@ -1,0 +1,7 @@
+{
+  "n_min": 3,
+  "n_max": 5,
+  "model": "baseline",
+  "max_features": 500,
+  "input_type": "char"
+}

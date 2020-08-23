@@ -3,7 +3,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from cli import args
+from cli import get_args
 from logger import logger
 
 DATA_DIR = Path("data")
@@ -28,13 +28,7 @@ def extract_turkic_texts():
         logger.info("{} is extracted.".format(lang))
 
 
-def stats():
-    for lang in STR2ID.keys():
-        data = pd.read_csv(DATA_DIR / "{}.tsv".format(lang), sep="\t")
-        logger.info("{lang}: {sum} samples".format(lang=lang, sum=len(data)))
-
-
-def split(random_seed: int):
+def split(random_seed):
     '''
     This function split data into train, dev, test as %80, %10, %10 respectively and saved under DATA_DIR / random_seed
     :return:
@@ -104,10 +98,17 @@ def read_splits(random_seed):
     return X_train, y_train, X_dev, y_dev, X_test, y_test
 
 
+def read_test_from_split(random_seed):
+    splits_dir = DATA_DIR / str(random_seed)
+    data = np.load(splits_dir / "data.npz")
+    X_test = data["X_test"]
+    y_test = data["y_test"]
+    return X_test, y_test
+
+
 if __name__ == '__main__':
+    args = get_args()
     if args.mode == "extract_turkic_texts":
         extract_turkic_texts()
-    elif args.mode == "stats":
-        stats()
     elif args.mode == "split":
         split(args.random_seed)

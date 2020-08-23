@@ -1,0 +1,7 @@
+{
+  "n_min": 1,
+  "n_max": 3,
+  "model": "baseline",
+  "max_features": 500,
+  "input_type": "word"
+}

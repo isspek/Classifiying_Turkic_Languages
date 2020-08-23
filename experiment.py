@@ -5,9 +5,9 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import classification_report
 
+from cli import get_args
 from dataset import read_splits, ID2STR
 from logger import logger
-from cli import args
 from models import MODELS
 
 MODEL_CONFIG_DIR = "model_configs"
@@ -15,7 +15,7 @@ MODELS_DIR = "models"
 random_splits = [42, 1, 15]
 
 
-def experiment(fname: str):
+def experiment(fname: str, force):
     reports_dev = []
     reports_test = []
     for random_split in random_splits:
@@ -39,7 +39,7 @@ def experiment(fname: str):
         # TODO check the below
         model.model_path = model.model_dir / model.model_path
 
-        if not model.model_path.exists():
+        if not model.model_path.exists() or force:
             model.fit(X_train, y_train)
 
         logger.info("Prediction mode")
@@ -86,4 +86,5 @@ def experiment(fname: str):
 
 
 if __name__ == '__main__':
-    experiment(args.fname)
+    args = get_args()
+    experiment(args.fname, force=args.force if args.force else None)

@@ -1,0 +1,9 @@
+{
+  "n_min_char": 3,
+  "n_max_char": 5,
+  "n_min_word": 1,
+  "n_max_word": 3,
+  "model": "baseline-combined",
+  "max_features": 500,
+  "input_type": "combined"
+}
