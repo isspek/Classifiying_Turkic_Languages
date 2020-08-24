@@ -48,10 +48,3 @@ class FeatureExtractor:
             if len(token) < th:
                 count += 1
         return count
-
-
-if __name__ == '__main__':
-    feat_extractor = FeatureExtractor()
-    example_az = "Yaxın vaxtlarda Azərbaycanın görkəmli bəstəkarı Qara Qarayevin ev muzeyi yaradılacaq. Artıq müxtəlif fondlarda dahi bəstəkara aid materialların siyahısı tutulub. Əldə olunan materialların toplandığı kataloq isə tezliklə işıq üzü görəcək. Bu barədə ""Ayna"" qəzetinə daxil olan məlumatda bildirilir."
-    example_tr = "3) Yarın Türkiye’ye gelecek olan ABD Dışişleri Bakanı Hillary Clinton’a, bakanlığının hazırladığı İnsan Hakları Raporu’ndaki Türkiye ile ilgili saptamaları soracak mısınız?"
-    example_uz = "Britaniya va Fransiya Qo’shma Shtatlarni safga to’liq qaytishga, faolroq harakat qilishga chaqirmoqda."

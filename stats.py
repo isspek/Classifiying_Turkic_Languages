@@ -12,7 +12,19 @@ def stats(type):
         for lang in STR2ID.keys():
             data = pd.read_csv(DATA_DIR / "{}.tsv".format(lang), sep="\t")
             logger.info("{lang}: {sum} samples".format(lang=lang, sum=len(data)))
-    elif type == "experimental":
+            feat_extractor = FeatureExtractor()
+
+            X_texts = data["Text"]
+
+            X_sents = [feat_extractor.extract_sents(text[0]) for text in X_texts]
+            X_words = [feat_extractor.extract_words(text) for text in X_texts]
+
+            X_sent_count = [len(sent) for sent in X_sents]  # average sentences in post
+            X_word_count = [len(words) for words in X_words]  # average words in post
+            logger.info(np.mean(X_sent_count))
+            logger.info(np.mean(X_word_count))
+
+    elif type == "experiments":
         random_splits = [42, 1, 15]
         for i in random_splits:
             logger.info("Random seed {}".format(i))
